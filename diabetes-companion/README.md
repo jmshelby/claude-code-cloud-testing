@@ -1,17 +1,27 @@
 # Diabetes Companion - AI-Powered Diabetes Management Assistant
 
-A Phase 1 demonstration of AWS Strands Agents for diabetes management, combining Python-based agent orchestration with TypeScript MCP (Model Context Protocol) servers.
+**Phase 2: Active Assistant** - A comprehensive demonstration of AWS Strands Agents for diabetes management, combining Python-based agent orchestration with TypeScript MCP (Model Context Protocol) servers.
 
 ## Overview
 
-**Diabetes Companion** is an AI assistant designed to help people newly diagnosed with diabetes manage their condition. It showcases how AWS Strands Agents can orchestrate multiple specialized tools through MCP servers to provide a comprehensive health management experience.
+**Diabetes Companion** is an AI assistant designed to help people manage diabetes with data-driven insights. It showcases how AWS Strands Agents can orchestrate multiple specialized tools through MCP servers to provide an advanced health management experience.
 
-### Phase 1 Features
+## Features
 
-- **Educational Q&A**: Get clear, empathetic answers about diabetes management
-- **Blood Glucose Tracking**: Log readings, check ranges, view trends and statistics
-- **Meal Logging**: Track meals and carbohydrate intake with a built-in food database
-- **Smart Analysis**: Receive context-aware feedback on glucose readings and meals
+### Phase 1 (Basic Companion)
+- ✅ Educational Q&A about diabetes management
+- ✅ Blood glucose tracking with range checking
+- ✅ Meal logging with carbohydrate counting
+- ✅ Food database with 50+ common foods
+
+### Phase 2 (Active Assistant) - **Current**
+- ✅ **Advanced Pattern Detection**: Identifies high morning readings, post-meal spikes, hypoglycemia trends
+- ✅ **Trend Analysis**: Analyzes glucose trends over 3 days, week, 2 weeks, or month
+- ✅ **Time-in-Range (TIR)**: Calculates key diabetes metric (goal: >70%, ideally >80%)
+- ✅ **Exercise Tracking**: Log activities, track glucose impact, get personalized recommendations
+- ✅ **Smart Reminders**: Set up testing schedules (minimal/standard/intensive) and medication reminders
+- ✅ **Weekly Exercise Summaries**: Track progress toward ADA's 150-minute weekly goal
+- ✅ **Glucose Impact Analysis**: See how exercise affects your blood sugar
 
 ## Architecture
 
@@ -20,18 +30,22 @@ A Phase 1 demonstration of AWS Strands Agents for diabetes management, combining
 │   Strands Agent (Python)                │
 │   - Educational diabetes knowledge      │
 │   - Conversation management             │
-│   - Tool orchestration                  │
+│   - Multi-tool orchestration            │
+│   - Pattern recognition                 │
 └──────────┬──────────────────────────────┘
            │
-           ├──────────────┬──────────────────┐
-           │              │                  │
-           ▼              ▼                  ▼
-    ┌──────────┐   ┌──────────┐      ┌──────────┐
-    │ Glucose  │   │   Meal   │      │  Future  │
-    │ Tracker  │   │  Logger  │      │  Tools   │
-    │  (MCP)   │   │  (MCP)   │      │          │
-    └──────────┘   └──────────┘      └──────────┘
-    TypeScript     TypeScript
+           ├──────────┬──────────┬──────────┬──────────┐
+           │          │          │          │          │
+           ▼          ▼          ▼          ▼          ▼
+    ┌──────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐
+    │ Glucose  │ │  Meal   │ │Reminder │ │Exercise │
+    │ Tracker  │ │ Logger  │ │ System  │ │ Logger  │
+    │  (MCP)   │ │  (MCP)  │ │  (MCP)  │ │  (MCP)  │
+    └──────────┘ └─────────┘ └─────────┘ └─────────┘
+    TypeScript   TypeScript  TypeScript  TypeScript
+
+    Enhanced      50+ Food    Testing     Activity
+    Analytics     Database    Schedules   Tracking
 ```
 
 ### Technology Stack
@@ -39,6 +53,7 @@ A Phase 1 demonstration of AWS Strands Agents for diabetes management, combining
 - **Agent Framework**: AWS Strands Agents (Python)
 - **Tool Servers**: Model Context Protocol (MCP) servers in TypeScript/Node.js
 - **LLM**: Amazon Bedrock (Claude 3.7 Sonnet)
+- **Architecture**: Polyglot (Python + TypeScript working seamlessly)
 
 ## Prerequisites
 
@@ -81,37 +96,50 @@ A Phase 1 demonstration of AWS Strands Agents for diabetes management, combining
    export AWS_DEFAULT_REGION="us-east-1"
    ```
 
-## Installation
+## Quick Start
 
-### 1. Install TypeScript MCP Servers
-
-Navigate to each MCP server directory and install dependencies:
+### One-Command Setup
 
 ```bash
-# Install Glucose Tracker server
-cd diabetes-companion/mcp-servers/glucose-tracker
-npm install
-npm run build
-
-# Install Meal Logger server
-cd ../meal-logger
-npm install
-npm run build
-
-cd ../../..
+cd diabetes-companion
+./setup.sh
 ```
 
-### 2. Install Python Agent
+This will install all dependencies and build all MCP servers.
+
+### Manual Installation
+
+<details>
+<summary>Click to expand manual installation steps</summary>
+
+#### 1. Install All MCP Servers
 
 ```bash
-# Create a virtual environment (recommended)
-cd diabetes-companion/agent
+cd diabetes-companion
+
+# Glucose Tracker
+cd mcp-servers/glucose-tracker && npm install && npm run build && cd ../..
+
+# Meal Logger
+cd mcp-servers/meal-logger && npm install && npm run build && cd ../..
+
+# Reminder System
+cd mcp-servers/reminder-system && npm install && npm run build && cd ../..
+
+# Exercise Logger
+cd mcp-servers/exercise-logger && npm install && npm run build && cd ../..
+```
+
+#### 2. Install Python Agent
+
+```bash
+cd agent
 python3 -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
-
-# Install dependencies
 pip install -r requirements.txt
 ```
+
+</details>
 
 ## Usage
 
@@ -120,135 +148,218 @@ pip install -r requirements.txt
 From the `diabetes-companion/agent` directory:
 
 ```bash
-# Make sure virtual environment is activated
-source venv/bin/activate
-
-# Run in interactive mode
+source venv/bin/activate  # On Windows: venv\Scripts\activate
 python agent.py
 ```
 
 ### Example Interactions
 
-**Educational Questions:**
+**Getting Started:**
 ```
-You: I just got diagnosed with Type 2 diabetes. What should I know?
-DiabetesCompanion: [Provides comprehensive, empathetic information about diabetes]
+You: I was just diagnosed with Type 2 diabetes. What should I do first?
+Agent: [Provides empathetic guidance and suggests setting up testing schedule]
 ```
 
-**Logging Blood Glucose:**
+**Logging Glucose with Pattern Detection:**
 ```
-You: My blood glucose is 145 mg/dL after breakfast
-DiabetesCompanion: [Logs the reading, analyzes if it's in range, provides feedback]
+You: My fasting glucose has been 145, 152, 148 over the last 3 days
+Agent: [Logs readings, detects high fasting pattern, provides recommendations]
+```
+
+**Time-in-Range Analysis:**
+```
+You: What's my time in range?
+Agent: [Calculates TIR percentage, provides assessment against 70% goal]
+```
+
+**Exercise Tracking:**
+```
+You: I walked for 30 minutes today. My glucose was 160 before and 125 after
+Agent: [Logs exercise, analyzes glucose impact, provides feedback]
+
+You: What exercise should I do as a beginner?
+Agent: [Provides personalized recommendations based on fitness level]
+```
+
+**Setting Up Reminders:**
+```
+You: Help me set up a testing schedule
+Agent: [Offers minimal/standard/intensive options, creates daily reminders]
+
+You: When is my next reminder?
+Agent: [Shows next upcoming test/medication reminder with time remaining]
+```
+
+**Trend Analysis:**
+```
+You: Show me my glucose trends over the past week
+Agent: [Displays daily averages, trend direction, interpretation]
+
+You: Detect any patterns in my readings
+Agent: [Analyzes for post-meal spikes, high fasting, variability, etc.]
 ```
 
 **Meal Planning:**
 ```
-You: How many carbs are in an apple?
-DiabetesCompanion: [Looks up food database, provides carb count and serving size]
+You: I'm planning to eat an apple and yogurt. How many carbs?
+Agent: [Estimates total carbs using food database]
 
 You: I ate oatmeal and a banana for breakfast
-DiabetesCompanion: [Logs meal, estimates carbs, provides guidance]
+Agent: [Logs meal with estimated carbs, provides feedback]
 ```
 
-**Viewing Trends:**
-```
-You: Show me my recent blood glucose readings
-DiabetesCompanion: [Retrieves and displays recent readings with analysis]
+## Available Tools by MCP Server
 
-You: What's my average glucose level?
-DiabetesCompanion: [Provides statistics including average, min, max, and trends]
-```
+### Glucose Tracker (Enhanced for Phase 2)
+- `log_glucose` - Log blood glucose reading with context
+- `get_recent_readings` - View recent readings
+- `get_statistics` - Calculate averages, min/max, distribution
+- `check_reading_range` - Check if reading is healthy
+- **`detect_patterns`** - Identify high fasting, post-meal spikes, trends ⭐
+- **`get_trend_analysis`** - Analyze trends over time periods ⭐
+- **`get_time_in_range`** - Calculate TIR percentage ⭐
 
-### Single Query Mode (for testing)
+### Meal Logger
+- `log_meal` - Log meals with carb counts
+- `lookup_food_carbs` - Query 50+ food database
+- `get_recent_meals` - View meal history
+- `get_daily_summary` - Daily carb totals
+- `estimate_meal_carbs` - Plan meals
 
-```bash
-python agent.py --single "What are normal blood glucose ranges?"
-```
+### Reminder System ⭐ NEW
+- `create_reminder` - Create test/medication reminders
+- `setup_testing_schedule` - Auto-generate daily schedules (minimal/standard/intensive)
+- `list_reminders` - View all reminders
+- `get_next_reminder` - See next upcoming reminder
+- `toggle_reminder` - Enable/disable reminders
+- `delete_reminder` - Remove reminders
 
-## Available Tools
-
-### Glucose Tracker MCP Server
-
-- `log_glucose`: Log blood glucose reading with context
-- `get_recent_readings`: View recent glucose readings
-- `get_statistics`: Get averages, min/max, and trend analysis
-- `check_reading_range`: Check if a reading is in healthy range
-
-### Meal Logger MCP Server
-
-- `log_meal`: Log meals with foods and carbohydrate counts
-- `lookup_food_carbs`: Look up carbs for common foods
-- `get_recent_meals`: View recent meal logs
-- `get_daily_summary`: Get today's meal summary and total carbs
-- `estimate_meal_carbs`: Estimate carbs for a list of foods
+### Exercise Logger ⭐ NEW
+- `log_exercise` - Track activity with duration, intensity, glucose readings
+- `get_exercise_info` - Learn about specific exercises
+- `get_recent_exercises` - View exercise history
+- `get_weekly_summary` - Track weekly activity against ADA's 150-minute goal
+- `get_exercise_recommendations` - Get personalized plans (beginner/intermediate/advanced)
+- `analyze_glucose_impact` - See how exercise affects blood sugar
 
 ## Project Structure
 
 ```
 diabetes-companion/
-├── README.md                          # This file
+├── README.md                          # This file (Phase 2)
+├── setup.sh                           # One-command setup script
+├── .gitignore                         # Git ignore rules
 ├── agent/                             # Python Strands agent
-│   ├── agent.py                       # Main agent code
+│   ├── agent.py                       # Main agent (Phase 2 enhanced)
 │   ├── requirements.txt               # Python dependencies
-│   └── venv/                          # Virtual environment (created during setup)
+│   └── venv/                          # Virtual environment
 └── mcp-servers/                       # MCP tool servers
-    ├── glucose-tracker/               # Blood glucose tracking
+    ├── glucose-tracker/               # Enhanced with analytics
     │   ├── package.json
     │   ├── tsconfig.json
-    │   ├── src/
-    │   │   └── index.ts               # Glucose tracker implementation
-    │   └── dist/                      # Compiled JavaScript (created by build)
-    └── meal-logger/                   # Meal and carb tracking
+    │   ├── src/index.ts               # Pattern detection, trends, TIR
+    │   └── dist/
+    ├── meal-logger/                   # Food database
+    │   ├── package.json
+    │   ├── tsconfig.json
+    │   ├── src/index.ts               # 50+ foods with carb data
+    │   └── dist/
+    ├── reminder-system/               # NEW: Smart reminders
+    │   ├── package.json
+    │   ├── tsconfig.json
+    │   ├── src/index.ts               # Testing & medication schedules
+    │   └── dist/
+    └── exercise-logger/               # NEW: Activity tracking
         ├── package.json
         ├── tsconfig.json
-        ├── src/
-        │   └── index.ts               # Meal logger implementation
-        └── dist/                      # Compiled JavaScript (created by build)
+        ├── src/index.ts               # Exercise tracking & analysis
+        └── dist/
 ```
 
 ## Troubleshooting
 
 ### "Module not found" errors
 
-Make sure you've installed dependencies for both MCP servers and the Python agent:
+Ensure all MCP servers are built:
 ```bash
-# For each MCP server
-cd mcp-servers/glucose-tracker && npm install && npm run build
-cd ../meal-logger && npm install && npm run build
+cd diabetes-companion
+./setup.sh
+```
 
-# For the agent
-cd ../../agent && pip install -r requirements.txt
+Or manually:
+```bash
+cd mcp-servers/glucose-tracker && npm run build
+cd ../meal-logger && npm run build
+cd ../reminder-system && npm run build
+cd ../exercise-logger && npm run build
 ```
 
 ### AWS Credentials Issues
 
-Verify your AWS credentials are configured:
+Verify credentials:
 ```bash
 aws sts get-caller-identity
 ```
 
-Ensure you have Bedrock model access:
+Check Bedrock access:
 ```bash
 aws bedrock list-foundation-models --region us-east-1
 ```
 
 ### MCP Server Connection Issues
 
-The agent needs to find the compiled MCP server files. Ensure:
-1. Both servers are built: `npm run build` in each server directory
-2. The `dist/` folders exist and contain `index.js`
+The agent expects compiled JavaScript in `dist/` folders. Run:
+```bash
+npm run build
+```
+in each MCP server directory.
 
-## Future Enhancements (Phase 2+)
+## What Phase 2 Demonstrates
 
-- **Time-based reminders**: Scheduled notifications for testing blood glucose
-- **Pattern detection**: AI-driven insights about glucose trends
-- **Exercise logging**: Track physical activity and its impact
-- **Medication reminders**: Track insulin and medication schedules
-- **Report generation**: Create summaries for doctor visits
-- **Multi-agent system**: Specialized agents for education, tracking, and emergencies
-- **Session persistence**: Remember user history across sessions using Strands SessionManager
-- **Web search integration**: Real-time diabetes research and recipe lookup
-- **Data export**: Export logs to CSV/PDF for healthcare providers
+### Strands Agents Capabilities
+✅ **Multi-tool orchestration** - 4 MCP servers working together
+✅ **Intelligent routing** - Agent chooses right tools for user's request
+✅ **Polyglot architecture** - Python agent + TypeScript tools
+✅ **Advanced analytics** - Pattern detection and trend analysis
+✅ **Proactive assistance** - Agent suggests insights and recommendations
+
+### Real-World Value
+✅ **Pattern detection** - Identifies glucose control issues automatically
+✅ **Time-in-range** - Industry-standard diabetes metric
+✅ **Exercise integration** - Shows exercise impact on glucose
+✅ **Smart scheduling** - Adapts to user's lifestyle (minimal/standard/intensive)
+✅ **Actionable insights** - Specific recommendations based on data
+
+## Future Enhancements (Phase 3+)
+
+### Phase 3: Multi-Agent System
+- Specialized agents:
+  - **Education Agent**: Deep diabetes knowledge
+  - **Tracking Agent**: Data management
+  - **Advisory Agent**: Pattern-based recommendations
+  - **Emergency Agent**: Critical situation handling
+- Agent-to-Agent (A2A) communication
+- Agent handoffs and delegation
+
+### Phase 4: Production Features
+- **Session Persistence**: Strands SessionManager with S3
+- **Web Search Integration**: Real-time recipe and research lookup
+- **Data Export**: CSV/PDF reports for doctors
+- **Medication Tracking**: Insulin and oral medication logging
+- **A1C Estimation**: Calculate estimated A1C from glucose readings
+- **Alert System**: Notifications for patterns requiring attention
+- **CGM Integration**: Connect to continuous glucose monitors
+- **Telemedicine Ready**: Generate visit summaries
+
+## Key Metrics & Goals
+
+| Metric | Target | Purpose |
+|--------|--------|---------|
+| Time in Range (TIR) | >70% (ideally >80%) | Primary glucose control metric |
+| Fasting Glucose | 70-130 mg/dL | Morning baseline |
+| Post-Meal Glucose | <180 mg/dL | 2 hours after eating |
+| Weekly Exercise | 150+ minutes | ADA recommendation |
+| Testing Frequency | 4-7x daily | Varies by treatment type |
 
 ## Safety Disclaimer
 
@@ -257,14 +368,48 @@ The agent needs to find the compiled MCP server files. Ensure:
 - Always consult healthcare professionals for personalized medical guidance
 - Severe symptoms (confusion, very high/low readings) require emergency care
 - This tool complements but does not replace proper medical care
+- Pattern detection helps identify trends but isn't diagnostic
 
 ## Learning Resources
 
 - [AWS Strands Agents Documentation](https://strandsagents.com/latest/)
-- [Model Context Protocol](https://modelcontextprotocol.io/)
+- [Model Context Protocol (MCP)](https://modelcontextprotocol.io/)
 - [Strands GitHub Examples](https://github.com/strands-agents/samples)
 - [Amazon Bedrock](https://aws.amazon.com/bedrock/)
+- [American Diabetes Association (ADA)](https://diabetes.org/)
+- [Understanding Time in Range](https://diatribe.org/time-in-range)
+
+## Technical Highlights
+
+### Why This is a Great Strands Demo
+
+1. **Real-World Problem**: Diabetes affects 537M people globally
+2. **Multi-Tool Complexity**: 4 specialized MCP servers with 20+ tools
+3. **Advanced Analytics**: Pattern detection, trend analysis, TIR calculation
+4. **Polyglot Design**: Python + TypeScript demonstrating MCP interoperability
+5. **Practical Value**: Actual health management utility beyond "hello world"
+6. **Scalability Path**: Clear roadmap to production-ready system
+
+### Code Quality
+- Type-safe TypeScript MCP servers
+- Comprehensive error handling
+- In-memory storage (easily upgradeable to databases)
+- Modular, maintainable architecture
+- Detailed inline documentation
+
+## Contributing
+
+This is an educational demonstration project. Contributions welcome for:
+- Additional MCP servers (medication tracking, A1C estimation, etc.)
+- Enhanced analytics algorithms
+- Multi-agent patterns (Phase 3)
+- Session persistence (Phase 4)
+- UI/dashboard integration
 
 ## License
 
-This is an educational demonstration project.
+This is an educational demonstration project showing AWS Strands Agents capabilities.
+
+---
+
+**Built with AWS Strands Agents** 🧬 | **Powered by Amazon Bedrock** ☁️ | **MCP Protocol** 🔌

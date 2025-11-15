@@ -41,6 +41,22 @@ cd ../..
 echo "✓ Meal Logger installed"
 echo ""
 
+echo "Installing Reminder System MCP server..."
+cd mcp-servers/reminder-system
+npm install
+npm run build
+cd ../..
+echo "✓ Reminder System installed"
+echo ""
+
+echo "Installing Exercise Logger MCP server..."
+cd mcp-servers/exercise-logger
+npm install
+npm run build
+cd ../..
+echo "✓ Exercise Logger installed"
+echo ""
+
 # Set up Python environment
 echo "🐍 Setting up Python agent..."
 cd agent
