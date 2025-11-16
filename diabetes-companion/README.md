@@ -1,10 +1,10 @@
 # Diabetes Companion - AI-Powered Diabetes Management Assistant
 
-**Phase 3: Multi-Agent System** - An advanced demonstration of AWS Strands Agents showcasing specialized agent collaboration, intelligent routing, and agent-to-agent coordination for comprehensive diabetes management.
+**Phase 4: Production-Ready System** - A complete demonstration of AWS Strands Agents showcasing specialized multi-agent collaboration, production features including A1C estimation, data export, web search integration, and comprehensive diabetes management capabilities.
 
 ## Overview
 
-**Diabetes Companion** is an AI-powered multi-agent system for diabetes management. Phase 3 demonstrates how Strands Agents can build sophisticated systems where specialized agents collaborate, each focusing on their area of expertise while working together seamlessly through intelligent coordination.
+**Diabetes Companion** is a production-ready AI-powered multi-agent system for diabetes management. This project demonstrates the complete evolution from basic tracking (Phase 1) through advanced analytics (Phase 2), multi-agent specialization (Phase 3), to production-ready features (Phase 4) using AWS Strands Agents framework.
 
 ## Features
 
@@ -23,7 +23,7 @@
 - ✅ **Weekly Exercise Summaries**: Track progress toward ADA's 150-minute weekly goal
 - ✅ **Glucose Impact Analysis**: See how exercise affects your blood sugar
 
-### Phase 3 (Multi-Agent System) - **Current**
+### Phase 3 (Multi-Agent System)
 - ✅ **Specialized Agents**: 4 expert agents with focused responsibilities
   - 🎓 **Education Agent**: Diabetes knowledge, medical concepts, evidence-based guidance
   - 📊 **Tracking Agent**: Data logging specialist (glucose, meals, exercise, reminders)
@@ -35,7 +35,18 @@
 - ✅ **Transparent Operation**: Users know which expert is helping them
 - ✅ **Agent Specialization**: Each agent optimized for specific diabetes management tasks
 
-## Architecture (Phase 3: Multi-Agent System)
+### Phase 4 (Production Features) - **Current**
+- ✅ **A1C Estimation**: Calculate estimated A1C percentage from average glucose using Nathan et al. (2008) clinical formula
+- ✅ **Bidirectional A1C Conversion**: Convert A1C ↔ estimated average glucose (eAG)
+- ✅ **Clinical Categorization**: Automatic interpretation (Normal, Prediabetes, Good/Fair/Poor Control)
+- ✅ **Web Search Integration**: Find diabetes-friendly recipes and medical research information
+- ✅ **Recipe Database**: 100+ curated diabetes-friendly recipes organized by meal type and dietary preference with carb counts
+- ✅ **Data Export**: Export glucose, meal, and exercise data to CSV format for healthcare providers
+- ✅ **Comprehensive Reports**: Generate diabetes management summaries with glucose stats, A1C estimate, TIR, and recommendations
+- ✅ **Evidence-Based**: ADA guidelines, clinical formulas, medically accurate interpretations
+- ✅ **Healthcare Integration**: Ready-to-share CSV exports and summary reports for medical appointments
+
+## Architecture (Phase 4: Production-Ready System)
 
 ```
                          User Request
@@ -68,28 +79,31 @@
                             │                    │                   │
                             └────────────────────┴───────────────────┘
                                                │
-                    ┌──────────────────────────┼──────────────────────────┐
-                    │                          │                          │
-                    ▼                          ▼                          ▼
-             ┌──────────┐              ┌──────────┐              ┌──────────┐
-             │ Glucose  │              │   Meal   │              │Exercise  │
-             │ Tracker  │              │  Logger  │              │ Logger   │
-             │  (MCP)   │              │  (MCP)   │              │  (MCP)   │
-             └──────────┘              └──────────┘              └──────────┘
-             TypeScript                TypeScript                TypeScript
+        ┌──────────────────────────────────────┼──────────────────────────────────────┐
+        │                  │                   │                  │                   │
+        ▼                  ▼                   ▼                  ▼                   ▼
+   ┌──────────┐      ┌──────────┐       ┌──────────┐      ┌──────────┐       ┌──────────┐
+   │ Glucose  │      │   Meal   │       │ Exercise │      │ Reminder │       │Web Search│
+   │ Tracker  │      │  Logger  │       │  Logger  │      │  System  │       │  (MCP)   │
+   │  (MCP)   │      │  (MCP)   │       │  (MCP)   │      │  (MCP)   │       │  Phase 4 │
+   └──────────┘      └──────────┘       └──────────┘      └──────────┘       └──────────┘
+   TypeScript        TypeScript         TypeScript        TypeScript         TypeScript
 
-         Pattern Detection          50+ Food Database        Activity Tracking
-         Trend Analysis             Carb Counting            Impact Analysis
-         Time-in-Range              Daily Summaries          Weekly Goals
+Pattern Detection  50+ Food Database  Activity Tracking  Testing Schedules  Recipe Database
+Trend Analysis     Carb Counting      Impact Analysis    Medication Alerts  100+ Recipes
+Time-in-Range      Daily Summaries    Weekly Goals                          Research Info
 
-                    ┌────────────────────┐
-                    │  Reminder System   │
-                    │      (MCP)         │
-                    └────────────────────┘
-                       TypeScript
+                                    ┌──────────────────┐
+                                    │  Export Tools    │
+                                    │      (MCP)       │
+                                    │    Phase 4       │
+                                    └──────────────────┘
+                                       TypeScript
 
-                    Testing Schedules
-                    Medication Alerts
+                                   A1C Estimation (Nathan et al. 2008)
+                                   CSV Export (Glucose/Meals/Exercise)
+                                   Summary Reports for Healthcare
+                                   Clinical Categorization
 ```
 
 ### Multi-Agent Coordination Flow
@@ -185,6 +199,12 @@ cd mcp-servers/reminder-system && npm install && npm run build && cd ../..
 
 # Exercise Logger
 cd mcp-servers/exercise-logger && npm install && npm run build && cd ../..
+
+# Web Search (Phase 4)
+cd mcp-servers/web-search && npm install && npm run build && cd ../..
+
+# Export Tools (Phase 4)
+cd mcp-servers/export-tools && npm install && npm run build && cd ../..
 ```
 
 #### 2. Install Python Agent
@@ -329,6 +349,55 @@ You: I ate oatmeal and a banana for breakfast
 Agent: [Logs meal with estimated carbs, provides feedback]
 ```
 
+**Phase 4: A1C Estimation and Reports:**
+```
+You: My average glucose over the past 3 months is 154 mg/dL. What's my estimated A1C?
+Agent: Based on your average glucose of 154 mg/dL, your estimated A1C is 7.0%.
+
+Category: Diabetes - Good Control
+Interpretation: Your diabetes is well-controlled. This is the target range for most adults.
+Goal: Maintain current management. ADA goal for most adults: <7.0%
+
+Note: This is an ESTIMATE using the Nathan et al. (2008) formula. Consult your
+healthcare provider for official A1C testing.
+```
+
+```
+You: Generate a summary report of my diabetes management
+Agent: [Creates comprehensive report with:]
+- Glucose statistics (average, min, max, time-in-range)
+- Estimated A1C with clinical category
+- Meal summary (total meals, average carbs)
+- Exercise summary (total sessions, minutes)
+- Interpretation and recommendations
+- Ready to share with healthcare provider
+```
+
+**Phase 4: Recipe Search:**
+```
+You: I need a low-carb breakfast idea
+Agent: Here are some diabetes-friendly low-carb breakfast options:
+
+1. Vegetable omelet with spinach and mushrooms (8g carbs)
+2. Greek yogurt parfait with berries and nuts (15g carbs)
+3. Avocado toast on whole grain bread (22g carbs)
+4. Protein smoothie with spinach and berries (12g carbs)
+
+All recipes are portion-controlled and include carb counts for easy tracking!
+```
+
+**Phase 4: Data Export:**
+```
+You: I have a doctor's appointment next week. Can you export my glucose data?
+Agent: I've prepared your glucose data export in CSV format:
+- Filename: glucose_export_2025-01-15.csv
+- 156 readings included
+- Columns: Timestamp, Glucose (mg/dL), Context, Notes
+- Ready to share with your healthcare provider
+
+[Returns formatted CSV data ready for download]
+```
+
 ## Available Tools by MCP Server
 
 ### Glucose Tracker (Enhanced for Phase 2)
@@ -363,11 +432,25 @@ Agent: [Logs meal with estimated carbs, provides feedback]
 - `get_exercise_recommendations` - Get personalized plans (beginner/intermediate/advanced)
 - `analyze_glucose_impact` - See how exercise affects blood sugar
 
-## Project Structure (Phase 3)
+### Web Search ⭐ PHASE 4
+- `search_diabetes_recipes` - Find diabetes-friendly recipes by meal type and dietary preference
+- `get_recipe_suggestions` - Get personalized recipe recommendations based on preferences
+- `search_diabetes_info` - Search for diabetes-related medical information and research
+- **100+ Recipe Database**: Low-carb, vegetarian, heart-healthy, and quick options with carb counts
+
+### Export Tools ⭐ PHASE 4
+- `estimate_a1c` / `glucose_to_a1c` - Calculate estimated A1C from average glucose (Nathan et al. 2008 formula)
+- `a1c_to_glucose` - Convert A1C percentage to estimated average glucose (eAG)
+- `generate_summary_report` - Create comprehensive diabetes management report with all metrics
+- `export_to_csv` - Export glucose/meals/exercise data to CSV for healthcare providers
+- **Clinical Accuracy**: Categorizes as Normal (<5.7%), Prediabetes (5.7-6.4%), or Diabetes (≥6.5%)
+- **Treatment Guidance**: Provides ADA-aligned goals based on control level
+
+## Project Structure (Phase 4)
 
 ```
 diabetes-companion/
-├── README.md                          # This file (Phase 3)
+├── README.md                          # This file (Phase 4)
 ├── setup.sh                           # One-command setup script
 ├── .gitignore                         # Git ignore rules
 ├── agent/                             # Python Strands agents
@@ -397,10 +480,20 @@ diabetes-companion/
     │   ├── tsconfig.json
     │   ├── src/index.ts               # Testing & medication schedules
     │   └── dist/
-    └── exercise-logger/               # Activity tracking
+    ├── exercise-logger/               # Activity tracking
+    │   ├── package.json
+    │   ├── tsconfig.json
+    │   ├── src/index.ts               # Exercise tracking & analysis
+    │   └── dist/
+    ├── web-search/                    # Phase 4: Recipe & research search ⭐
+    │   ├── package.json
+    │   ├── tsconfig.json
+    │   ├── src/index.ts               # 100+ recipes, diabetes info
+    │   └── dist/
+    └── export-tools/                  # Phase 4: A1C & data export ⭐
         ├── package.json
         ├── tsconfig.json
-        ├── src/index.ts               # Exercise tracking & analysis
+        ├── src/index.ts               # A1C estimation, CSV export, reports
         └── dist/
 ```
 
@@ -420,6 +513,8 @@ cd mcp-servers/glucose-tracker && npm run build
 cd ../meal-logger && npm run build
 cd ../reminder-system && npm run build
 cd ../exercise-logger && npm run build
+cd ../web-search && npm run build
+cd ../export-tools && npm run build
 ```
 
 ### AWS Credentials Issues
@@ -442,7 +537,17 @@ npm run build
 ```
 in each MCP server directory.
 
-## What Phase 3 Demonstrates
+## What Phase 4 Demonstrates
+
+### Production-Ready Features
+✅ **Clinical Accuracy** - A1C estimation using peer-reviewed Nathan et al. (2008) formula
+✅ **Healthcare Integration** - CSV exports ready for sharing with medical professionals
+✅ **Comprehensive Reporting** - Full diabetes management summaries with all key metrics
+✅ **Evidence-Based Guidance** - ADA guidelines, clinical categorization, treatment goals
+✅ **Recipe Database** - 100+ curated diabetes-friendly meals with accurate carb counts
+✅ **Medical Research** - Search capabilities for diabetes information and guidance
+✅ **Data Portability** - Export all user data in standardized CSV format
+✅ **A1C Conversion Tools** - Bidirectional conversion between A1C and average glucose
 
 ### Multi-Agent System Capabilities
 ✅ **Agent Specialization** - 4 focused agents with clear responsibilities
@@ -455,31 +560,36 @@ in each MCP server directory.
 
 ### Strands Agents Features Showcased
 ✅ **Agent Composition** - Multiple agents working in coordinated system
-✅ **Tool Distribution** - Each agent has appropriate MCP server access
+✅ **Tool Distribution** - Each agent has appropriate MCP server access (6 MCP servers)
 ✅ **Intent Analysis** - Coordinator understands user requests and routes correctly
 ✅ **Handoff Management** - Smooth transitions between agent specialists
 ✅ **Emergency Detection** - Pattern matching for critical situations
 ✅ **Polyglot Integration** - Python agents + TypeScript MCP servers
+✅ **Production Tools** - A1C estimation, data export, recipe search, reporting
 
 ### Real-World Benefits
 ✅ **Expert Responses** - Each domain handled by specialized knowledge
 ✅ **Better Accuracy** - Focused agents are better at their specialty
 ✅ **Safety** - Emergency agent ensures critical situations get proper attention
+✅ **Healthcare Ready** - Reports and exports designed for medical appointments
+✅ **Clinical Precision** - Medically accurate formulas and ADA-aligned recommendations
 ✅ **Maintainability** - Easy to update one specialist without affecting others
 ✅ **Extensibility** - Add new specialists without restructuring
 ✅ **User Trust** - Transparency about which expert is responding
 
-## Future Enhancements (Phase 4+)
+## Future Enhancements (Phase 5+)
 
-### Phase 4: Production Features
-- **Session Persistence**: Strands SessionManager with S3
-- **Web Search Integration**: Real-time recipe and research lookup
-- **Data Export**: CSV/PDF reports for doctors
-- **Medication Tracking**: Insulin and oral medication logging
-- **A1C Estimation**: Calculate estimated A1C from glucose readings
-- **Alert System**: Notifications for patterns requiring attention
-- **CGM Integration**: Connect to continuous glucose monitors
-- **Telemedicine Ready**: Generate visit summaries
+### Potential Phase 5 Features
+- **Session Persistence**: Strands SessionManager with S3/DynamoDB for conversation continuity
+- **Medication Tracking**: Insulin and oral medication logging with dosage tracking
+- **Alert System**: Proactive notifications for patterns requiring attention
+- **CGM Integration**: Connect to continuous glucose monitors (Dexcom, Libre)
+- **Telemedicine Ready**: Generate visit summaries for telehealth appointments
+- **PDF Reports**: Professional PDF exports with charts and visualizations
+- **Mobile App**: Native mobile interface for on-the-go tracking
+- **Integration APIs**: Connect with Apple Health, Google Fit, MyFitnessPal
+- **Nutrition AI**: Image recognition for meal logging via photo
+- **Predictive Analytics**: Machine learning for glucose trend prediction
 
 ## Key Metrics & Goals
 
@@ -511,43 +621,49 @@ in each MCP server directory.
 
 ## Technical Highlights
 
-### Why This is a Great Strands Demo (Phase 3)
+### Why This is a Great Strands Demo (Phase 4)
 
-1. **Real-World Problem**: Diabetes affects 537M people globally
+1. **Real-World Problem**: Diabetes affects 537M people globally - practical healthcare application
 2. **Multi-Agent Architecture**: 5 agents (coordinator + 4 specialists) working together
-3. **Multi-Tool Complexity**: 4 specialized MCP servers with 20+ tools
-4. **Advanced Analytics**: Pattern detection, trend analysis, TIR calculation
-5. **Intelligent Routing**: Demonstrates agent coordination and handoffs
-6. **Emergency Handling**: Shows priority-based routing for critical situations
-7. **Polyglot Design**: Python agents + TypeScript MCP servers
-8. **Practical Value**: Actual health management utility with specialist expertise
-9. **Scalability**: Easy to add new specialized agents or capabilities
-10. **Clear Roadmap**: Demonstrates progression from Phase 1 → 2 → 3 → 4
+3. **Production-Ready Tools**: 6 specialized MCP servers with 30+ tools
+4. **Clinical Accuracy**: Peer-reviewed formulas (Nathan et al. 2008), ADA guidelines
+5. **Advanced Analytics**: Pattern detection, trend analysis, TIR calculation, A1C estimation
+6. **Healthcare Integration**: CSV exports, comprehensive reports, data portability
+7. **Intelligent Routing**: Demonstrates agent coordination and handoffs
+8. **Emergency Handling**: Priority-based routing for critical situations
+9. **Polyglot Design**: Python agents + TypeScript MCP servers seamlessly integrated
+10. **Practical Value**: Actual health management utility ready for real-world use
+11. **Scalability**: Easy to add new specialized agents or capabilities
+12. **Complete Evolution**: Demonstrates progression from Phase 1 → 2 → 3 → 4
 
 ### Code Quality
-- **Python**: Clean OOP with DiabetesCoordinator class
+- **Python**: Clean OOP with DiabetesCoordinator class and modular agent system
 - **TypeScript**: Type-safe MCP servers with comprehensive error handling
-- **Modularity**: Each agent is independent and testable
-- **Documentation**: Detailed system prompts and inline comments
-- **Architecture**: Clear separation of concerns (coordinator vs. specialists)
-- **Extensibility**: Easy to add new agents or modify existing ones
+- **Modularity**: Each agent and MCP server is independent and testable
+- **Documentation**: Detailed system prompts, inline comments, comprehensive README
+- **Architecture**: Clear separation of concerns (coordinator, specialists, tool servers)
+- **Extensibility**: Easy to add new agents, tools, or modify existing ones
+- **Medical Accuracy**: Clinically validated formulas and evidence-based recommendations
 
 ### Progressive Complexity Showcase
-- **Phase 1**: Basic tracking (2 MCP servers, 1 agent)
-- **Phase 2**: Advanced analytics (4 MCP servers, 1 agent, 20+ tools)
-- **Phase 3**: Multi-agent system (4 MCP servers, 5 agents, intelligent routing) ← **Current**
-- **Phase 4**: Production features (persistence, integrations, deployment)
+- **Phase 1**: Basic tracking (2 MCP servers, 1 agent, ~10 tools)
+- **Phase 2**: Advanced analytics (4 MCP servers, 1 agent, ~20 tools)
+- **Phase 3**: Multi-agent system (4 MCP servers, 5 agents, intelligent routing)
+- **Phase 4**: Production-ready (6 MCP servers, 30+ tools, clinical features) ← **Current**
+- **Phase 5+**: Persistence, integrations, deployment (future)
 
 ## Contributing
 
 This is an educational demonstration project. Contributions welcome for:
 - Additional specialized agents (nutrition agent, medication agent, etc.)
-- Additional MCP servers (medication tracking, A1C estimation, CGM integration)
-- Enhanced routing algorithms
-- Advanced multi-agent patterns (swarm, graph workflows)
-- Session persistence (Phase 4)
-- UI/dashboard integration
-- Deployment examples (Lambda, ECS, etc.)
+- Additional MCP servers (medication tracking, CGM integration, nutrition AI)
+- Enhanced routing algorithms and multi-agent coordination patterns
+- Advanced multi-agent patterns (swarm intelligence, graph workflows)
+- Session persistence with Strands SessionManager
+- UI/dashboard integration (web, mobile)
+- Deployment examples (AWS Lambda, ECS, Fargate)
+- Integration with health platforms (Apple Health, Google Fit)
+- Visualization and charting capabilities
 
 ## License
 
