@@ -57,6 +57,22 @@ cd ../..
 echo "✓ Exercise Logger installed"
 echo ""
 
+echo "Installing Web Search MCP server..."
+cd mcp-servers/web-search
+npm install
+npm run build
+cd ../..
+echo "✓ Web Search installed"
+echo ""
+
+echo "Installing Export Tools MCP server..."
+cd mcp-servers/export-tools
+npm install
+npm run build
+cd ../..
+echo "✓ Export Tools installed"
+echo ""
+
 # Set up Python environment
 echo "🐍 Setting up Python agent..."
 cd agent
@@ -85,6 +101,11 @@ echo ""
 echo "To run the Diabetes Companion:"
 echo "  cd agent"
 echo "  source venv/bin/activate"
+echo ""
+echo "  # Phase 4: Multi-Agent System with Production Features (RECOMMENDED)"
+echo "  python coordinator_agent.py"
+echo ""
+echo "  # Alternative: Phase 2 single agent"
 echo "  python agent.py"
 echo ""
 echo "See README.md for more information."
