@@ -12,7 +12,8 @@ This agent uses AWS Strands Agents framework with MCP servers to provide:
 """
 
 import logging
-from strands import Agent, MCPServerTool
+from strands import Agent
+from strands_tools import MCPServerTool
 
 # Configure logging
 logging.getLogger("strands").setLevel(logging.INFO)
