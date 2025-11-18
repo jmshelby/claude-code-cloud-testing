@@ -7,8 +7,11 @@ import {
   ListToolsRequestSchema,
   Tool,
 } from "@modelcontextprotocol/sdk/types.js";
+import * as fs from "fs";
+import * as path from "path";
+import * as os from "os";
 
-// In-memory storage for meal logs
+// Storage for meal logs
 interface MealLog {
   timestamp: string;
   meal_type: string; // breakfast, lunch, dinner, snack
@@ -17,7 +20,48 @@ interface MealLog {
   notes?: string;
 }
 
-const meals: MealLog[] = [];
+// Data directory and file path
+const DATA_DIR = path.join(os.homedir(), ".diabetes-companion");
+const DATA_FILE = path.join(DATA_DIR, "meals.json");
+
+let meals: MealLog[] = [];
+
+// Ensure data directory exists
+function ensureDataDirectory() {
+  if (!fs.existsSync(DATA_DIR)) {
+    fs.mkdirSync(DATA_DIR, { recursive: true });
+    console.error(`Created data directory: ${DATA_DIR}`);
+  }
+}
+
+// Load meals from JSON file
+function loadMeals() {
+  try {
+    if (fs.existsSync(DATA_FILE)) {
+      const data = fs.readFileSync(DATA_FILE, "utf-8");
+      meals = JSON.parse(data);
+      console.error(`Loaded ${meals.length} meal logs from ${DATA_FILE}`);
+    } else {
+      console.error("No existing data file found. Starting with empty meals.");
+    }
+  } catch (error) {
+    console.error(`Error loading meals: ${error}. Starting with empty meals.`);
+    meals = [];
+  }
+}
+
+// Save meals to JSON file
+function saveMeals() {
+  try {
+    fs.writeFileSync(DATA_FILE, JSON.stringify(meals, null, 2), "utf-8");
+  } catch (error) {
+    console.error(`Error saving meals: ${error}`);
+  }
+}
+
+// Initialize storage
+ensureDataDirectory();
+loadMeals();
 
 // Common foods and their approximate carb content per serving
 const foodDatabase: Record<string, { serving: string; carbs: number }> = {
@@ -191,6 +235,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         };
 
         meals.push(meal);
+        saveMeals(); // Persist to disk
 
         return {
           content: [

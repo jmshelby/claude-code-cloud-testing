@@ -7,6 +7,9 @@ import {
   ListToolsRequestSchema,
   Tool,
 } from "@modelcontextprotocol/sdk/types.js";
+import * as fs from "fs";
+import * as path from "path";
+import * as os from "os";
 
 // Exercise types and their approximate calorie burn rates (per minute for 70kg person)
 const EXERCISE_TYPES: Record<
@@ -98,8 +101,56 @@ interface ExerciseLog {
   glucose_after?: number;
 }
 
-const exercises: ExerciseLog[] = [];
+// Data directory and file path
+const DATA_DIR = path.join(os.homedir(), ".diabetes-companion");
+const DATA_FILE = path.join(DATA_DIR, "exercises.json");
+
+let exercises: ExerciseLog[] = [];
 let exerciseIdCounter = 1;
+
+// Ensure data directory exists
+function ensureDataDirectory() {
+  if (!fs.existsSync(DATA_DIR)) {
+    fs.mkdirSync(DATA_DIR, { recursive: true });
+    console.error(`Created data directory: ${DATA_DIR}`);
+  }
+}
+
+// Load exercises from JSON file
+function loadExercises() {
+  try {
+    if (fs.existsSync(DATA_FILE)) {
+      const data = fs.readFileSync(DATA_FILE, "utf-8");
+      const parsed = JSON.parse(data);
+      exercises = parsed.exercises || [];
+      exerciseIdCounter = parsed.nextId || 1;
+      console.error(`Loaded ${exercises.length} exercise logs from ${DATA_FILE}`);
+    } else {
+      console.error("No existing data file found. Starting with empty exercises.");
+    }
+  } catch (error) {
+    console.error(`Error loading exercises: ${error}. Starting with empty exercises.`);
+    exercises = [];
+    exerciseIdCounter = 1;
+  }
+}
+
+// Save exercises to JSON file
+function saveExercises() {
+  try {
+    const data = {
+      exercises,
+      nextId: exerciseIdCounter,
+    };
+    fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2), "utf-8");
+  } catch (error) {
+    console.error(`Error saving exercises: ${error}`);
+  }
+}
+
+// Initialize storage
+ensureDataDirectory();
+loadExercises();
 
 // Define available tools
 const tools: Tool[] = [
@@ -268,6 +319,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         };
 
         exercises.push(exercise);
+        saveExercises(); // Persist to disk
 
         // Provide feedback about glucose impact
         let glucoseFeedback = "";

@@ -7,6 +7,9 @@ import {
   ListToolsRequestSchema,
   Tool,
 } from "@modelcontextprotocol/sdk/types.js";
+import * as fs from "fs";
+import * as path from "path";
+import * as os from "os";
 
 // Reminder types
 interface Reminder {
@@ -21,9 +24,56 @@ interface Reminder {
   created_at: string;
 }
 
-// In-memory storage
-const reminders: Reminder[] = [];
+// Data directory and file path
+const DATA_DIR = path.join(os.homedir(), ".diabetes-companion");
+const DATA_FILE = path.join(DATA_DIR, "reminders.json");
+
+let reminders: Reminder[] = [];
 let reminderIdCounter = 1;
+
+// Ensure data directory exists
+function ensureDataDirectory() {
+  if (!fs.existsSync(DATA_DIR)) {
+    fs.mkdirSync(DATA_DIR, { recursive: true });
+    console.error(`Created data directory: ${DATA_DIR}`);
+  }
+}
+
+// Load reminders from JSON file
+function loadReminders() {
+  try {
+    if (fs.existsSync(DATA_FILE)) {
+      const data = fs.readFileSync(DATA_FILE, "utf-8");
+      const parsed = JSON.parse(data);
+      reminders = parsed.reminders || [];
+      reminderIdCounter = parsed.nextId || 1;
+      console.error(`Loaded ${reminders.length} reminders from ${DATA_FILE}`);
+    } else {
+      console.error("No existing data file found. Starting with empty reminders.");
+    }
+  } catch (error) {
+    console.error(`Error loading reminders: ${error}. Starting with empty reminders.`);
+    reminders = [];
+    reminderIdCounter = 1;
+  }
+}
+
+// Save reminders to JSON file
+function saveReminders() {
+  try {
+    const data = {
+      reminders,
+      nextId: reminderIdCounter,
+    };
+    fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2), "utf-8");
+  } catch (error) {
+    console.error(`Error saving reminders: ${error}`);
+  }
+}
+
+// Initialize storage
+ensureDataDirectory();
+loadReminders();
 
 // Recommended testing schedule for newly diagnosed diabetics
 const RECOMMENDED_TEST_SCHEDULE = [
@@ -255,6 +305,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         };
 
         reminders.push(reminder);
+        saveReminders(); // Persist to disk
 
         return {
           content: [
@@ -496,6 +547,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         }
 
         reminder.enabled = enabled;
+        saveReminders(); // Persist to disk
 
         return {
           content: [
@@ -524,6 +576,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         }
 
         const deleted = reminders.splice(index, 1)[0];
+        saveReminders(); // Persist to disk
 
         return {
           content: [

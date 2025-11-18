@@ -7,8 +7,11 @@ import {
   ListToolsRequestSchema,
   Tool,
 } from "@modelcontextprotocol/sdk/types.js";
+import * as fs from "fs";
+import * as path from "path";
+import * as os from "os";
 
-// In-memory storage for blood glucose readings
+// Storage for blood glucose readings
 interface GlucoseReading {
   timestamp: string;
   value: number; // mg/dL
@@ -16,7 +19,48 @@ interface GlucoseReading {
   notes?: string;
 }
 
-const readings: GlucoseReading[] = [];
+// Data directory and file path
+const DATA_DIR = path.join(os.homedir(), ".diabetes-companion");
+const DATA_FILE = path.join(DATA_DIR, "glucose-readings.json");
+
+let readings: GlucoseReading[] = [];
+
+// Ensure data directory exists
+function ensureDataDirectory() {
+  if (!fs.existsSync(DATA_DIR)) {
+    fs.mkdirSync(DATA_DIR, { recursive: true });
+    console.error(`Created data directory: ${DATA_DIR}`);
+  }
+}
+
+// Load readings from JSON file
+function loadReadings() {
+  try {
+    if (fs.existsSync(DATA_FILE)) {
+      const data = fs.readFileSync(DATA_FILE, "utf-8");
+      readings = JSON.parse(data);
+      console.error(`Loaded ${readings.length} glucose readings from ${DATA_FILE}`);
+    } else {
+      console.error("No existing data file found. Starting with empty readings.");
+    }
+  } catch (error) {
+    console.error(`Error loading readings: ${error}. Starting with empty readings.`);
+    readings = [];
+  }
+}
+
+// Save readings to JSON file
+function saveReadings() {
+  try {
+    fs.writeFileSync(DATA_FILE, JSON.stringify(readings, null, 2), "utf-8");
+  } catch (error) {
+    console.error(`Error saving readings: ${error}`);
+  }
+}
+
+// Initialize storage
+ensureDataDirectory();
+loadReadings();
 
 // Helper function to check if reading is in normal range
 function analyzeReading(value: number, context: string): {
@@ -211,6 +255,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         };
 
         readings.push(reading);
+        saveReadings(); // Persist to disk
 
         const analysis = analyzeReading(value, context);
 
