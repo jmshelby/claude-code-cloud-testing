@@ -12,7 +12,7 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
 from strands import Agent
-from strands_tools.mcp import MCPServerTool
+from strands_agents_tools.mcp import MCPServerTool
 
 
 ADVISORY_SYSTEM_PROMPT = """You are the Advisory Specialist for DiabetesCompanion, an expert in analyzing diabetes data and providing personalized insights.
