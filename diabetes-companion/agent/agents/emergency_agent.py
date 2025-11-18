@@ -12,6 +12,7 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
 from strands import Agent
+from strands.models.anthropic import AnthropicModel
 from strands.tools.mcp import MCPClient
 from mcp import stdio_client, StdioServerParameters
 
@@ -118,6 +119,18 @@ Remember: Your role is to provide immediate, clear guidance in critical moments 
 def create_emergency_agent() -> Agent:
     """Create the Emergency Agent for critical situations."""
 
+    # Configure Anthropic model
+    model = AnthropicModel(
+        client_args={
+            "api_key": os.getenv("ANTHROPIC_API_KEY"),
+        },
+        max_tokens=4096,
+        model_id="claude-sonnet-4-20250514",
+        params={
+            "temperature": 0.3,  # Lower temperature for more focused emergency responses
+        }
+    )
+
     # Access to glucose tracker for logging emergency readings using MCPClient
     glucose_client = MCPClient(
         lambda: stdio_client(StdioServerParameters(
@@ -131,7 +144,7 @@ def create_emergency_agent() -> Agent:
         tools = glucose_client.list_tools_sync()
 
     return Agent(
-        model="claude-sonnet-4-20250514",  # Anthropic API
+        model=model,
         system_prompt=EMERGENCY_SYSTEM_PROMPT,
         tools=tools,
     )

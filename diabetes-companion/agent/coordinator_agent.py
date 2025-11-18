@@ -7,7 +7,9 @@ agent handoffs for complex queries requiring multiple specialists.
 """
 
 import logging
+import os
 from strands import Agent
+from strands.models.anthropic import AnthropicModel
 from agents import (
     create_education_agent,
     create_tracking_agent,
@@ -164,9 +166,21 @@ class DiabetesCoordinator:
         self.emergency_agent = create_emergency_agent()
         print("  ✓ Emergency Agent loaded")
 
+        # Configure Anthropic model for coordinator
+        coordinator_model = AnthropicModel(
+            client_args={
+                "api_key": os.getenv("ANTHROPIC_API_KEY"),
+            },
+            max_tokens=4096,
+            model_id="claude-sonnet-4-20250514",
+            params={
+                "temperature": 0.5,  # Moderate temperature for routing decisions
+            }
+        )
+
         # Create coordinator agent (no tools - just routing logic)
         self.coordinator = Agent(
-            model="claude-sonnet-4-20250514",  # Anthropic API
+            model=coordinator_model,
             system_prompt=COORDINATOR_SYSTEM_PROMPT,
             tools=[],  # Coordinator doesn't need tools - agents have them
         )

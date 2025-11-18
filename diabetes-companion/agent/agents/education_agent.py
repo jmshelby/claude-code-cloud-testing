@@ -6,7 +6,9 @@ educational content, explaining medical concepts, and offering general guidance
 about diabetes management.
 """
 
+import os
 from strands import Agent
+from strands.models.anthropic import AnthropicModel
 
 EDUCATION_SYSTEM_PROMPT = """You are the Education Specialist for DiabetesCompanion, an expert in diabetes education and patient guidance.
 
@@ -56,8 +58,21 @@ Remember: Your role is to empower users with knowledge so they can make informed
 
 def create_education_agent() -> Agent:
     """Create the Education Agent specialized for diabetes knowledge."""
+
+    # Configure Anthropic model
+    model = AnthropicModel(
+        client_args={
+            "api_key": os.getenv("ANTHROPIC_API_KEY"),
+        },
+        max_tokens=4096,
+        model_id="claude-sonnet-4-20250514",
+        params={
+            "temperature": 0.7,
+        }
+    )
+
     return Agent(
-        model="claude-sonnet-4-20250514",  # Anthropic API
+        model=model,
         system_prompt=EDUCATION_SYSTEM_PROMPT,
         tools=[],  # No tools - purely knowledge-based
     )

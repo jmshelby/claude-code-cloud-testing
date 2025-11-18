@@ -12,6 +12,7 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
 from strands import Agent
+from strands.models.anthropic import AnthropicModel
 from strands.tools.mcp import MCPClient
 from mcp import stdio_client, StdioServerParameters
 
@@ -87,6 +88,18 @@ Remember: Your role is to be the data analyst and coach, helping users understan
 def create_advisory_agent() -> Agent:
     """Create the Advisory Agent with access to analytics tools."""
 
+    # Configure Anthropic model
+    model = AnthropicModel(
+        client_args={
+            "api_key": os.getenv("ANTHROPIC_API_KEY"),
+        },
+        max_tokens=4096,
+        model_id="claude-sonnet-4-20250514",
+        params={
+            "temperature": 0.7,
+        }
+    )
+
     # Configure MCP servers using MCPClient (focused on analytics)
     mcp_servers = [
         MCPClient(
@@ -116,7 +129,7 @@ def create_advisory_agent() -> Agent:
             all_tools.extend(client.list_tools_sync())
 
     return Agent(
-        model="claude-sonnet-4-20250514",  # Anthropic API
+        model=model,
         system_prompt=ADVISORY_SYSTEM_PROMPT,
         tools=all_tools,
     )

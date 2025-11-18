@@ -12,7 +12,9 @@ This agent uses AWS Strands Agents framework with MCP servers to provide:
 """
 
 import logging
+import os
 from strands import Agent
+from strands.models.anthropic import AnthropicModel
 from strands.tools.mcp import MCPClient
 from mcp import stdio_client, StdioServerParameters
 
@@ -92,6 +94,18 @@ Remember: You're helping users take control of their diabetes management with da
 def create_diabetes_companion():
     """Create and configure the Diabetes Companion agent with MCP servers (Phase 2)."""
 
+    # Configure Anthropic model
+    model = AnthropicModel(
+        client_args={
+            "api_key": os.getenv("ANTHROPIC_API_KEY"),
+        },
+        max_tokens=4096,
+        model_id="claude-sonnet-4-20250514",
+        params={
+            "temperature": 0.7,
+        }
+    )
+
     # Configure MCP servers using MCPClient for comprehensive diabetes management
     mcp_servers = [
         MCPClient(
@@ -126,9 +140,9 @@ def create_diabetes_companion():
         with client:
             all_tools.extend(client.list_tools_sync())
 
-    # Create the agent with all MCP servers
+    # Create the agent with Anthropic model and all MCP servers
     agent = Agent(
-        model="claude-sonnet-4-20250514",  # Anthropic API
+        model=model,
         system_prompt=SYSTEM_PROMPT,
         tools=all_tools,
     )
