@@ -12,7 +12,8 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
 from strands import Agent
-from strands_tools import MCPServerTool
+from strands.tools.mcp import MCPClient
+from mcp import stdio_client, StdioServerParameters
 
 
 TRACKING_SYSTEM_PROMPT = """You are the Data Tracking Specialist for DiabetesCompanion, responsible for accurate data logging and management.
@@ -73,35 +74,44 @@ Remember: Your job is to be the reliable data clerk, ensuring every reading, mea
 def create_tracking_agent() -> Agent:
     """Create the Tracking Agent with access to all data logging MCP servers."""
 
-    # Configure MCP servers
-    glucose_server = MCPServerTool(
-        name="glucose-tracker",
-        command="node",
-        args=["../mcp-servers/glucose-tracker/dist/index.js"],
-    )
+    # Configure MCP servers using MCPClient
+    mcp_servers = [
+        MCPClient(
+            lambda: stdio_client(StdioServerParameters(
+                command="node",
+                args=["../mcp-servers/glucose-tracker/dist/index.js"],
+            ))
+        ),
+        MCPClient(
+            lambda: stdio_client(StdioServerParameters(
+                command="node",
+                args=["../mcp-servers/meal-logger/dist/index.js"],
+            ))
+        ),
+        MCPClient(
+            lambda: stdio_client(StdioServerParameters(
+                command="node",
+                args=["../mcp-servers/reminder-system/dist/index.js"],
+            ))
+        ),
+        MCPClient(
+            lambda: stdio_client(StdioServerParameters(
+                command="node",
+                args=["../mcp-servers/exercise-logger/dist/index.js"],
+            ))
+        ),
+    ]
 
-    meal_server = MCPServerTool(
-        name="meal-logger",
-        command="node",
-        args=["../mcp-servers/meal-logger/dist/index.js"],
-    )
-
-    reminder_server = MCPServerTool(
-        name="reminder-system",
-        command="node",
-        args=["../mcp-servers/reminder-system/dist/index.js"],
-    )
-
-    exercise_server = MCPServerTool(
-        name="exercise-logger",
-        command="node",
-        args=["../mcp-servers/exercise-logger/dist/index.js"],
-    )
+    # Collect all tools from MCP servers
+    all_tools = []
+    for client in mcp_servers:
+        with client:
+            all_tools.extend(client.list_tools_sync())
 
     return Agent(
         model="claude-sonnet-4-20250514",  # Anthropic API
         system_prompt=TRACKING_SYSTEM_PROMPT,
-        tools=[glucose_server, meal_server, reminder_server, exercise_server],
+        tools=all_tools,
     )
 
 

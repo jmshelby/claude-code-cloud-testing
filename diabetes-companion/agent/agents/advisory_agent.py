@@ -12,7 +12,8 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
 from strands import Agent
-from strands_tools import MCPServerTool
+from strands.tools.mcp import MCPClient
+from mcp import stdio_client, StdioServerParameters
 
 
 ADVISORY_SYSTEM_PROMPT = """You are the Advisory Specialist for DiabetesCompanion, an expert in analyzing diabetes data and providing personalized insights.
@@ -86,29 +87,38 @@ Remember: Your role is to be the data analyst and coach, helping users understan
 def create_advisory_agent() -> Agent:
     """Create the Advisory Agent with access to analytics tools."""
 
-    # Configure MCP servers (focused on analytics)
-    glucose_server = MCPServerTool(
-        name="glucose-tracker",
-        command="node",
-        args=["../mcp-servers/glucose-tracker/dist/index.js"],
-    )
+    # Configure MCP servers using MCPClient (focused on analytics)
+    mcp_servers = [
+        MCPClient(
+            lambda: stdio_client(StdioServerParameters(
+                command="node",
+                args=["../mcp-servers/glucose-tracker/dist/index.js"],
+            ))
+        ),
+        MCPClient(
+            lambda: stdio_client(StdioServerParameters(
+                command="node",
+                args=["../mcp-servers/meal-logger/dist/index.js"],
+            ))
+        ),
+        MCPClient(
+            lambda: stdio_client(StdioServerParameters(
+                command="node",
+                args=["../mcp-servers/exercise-logger/dist/index.js"],
+            ))
+        ),
+    ]
 
-    meal_server = MCPServerTool(
-        name="meal-logger",
-        command="node",
-        args=["../mcp-servers/meal-logger/dist/index.js"],
-    )
-
-    exercise_server = MCPServerTool(
-        name="exercise-logger",
-        command="node",
-        args=["../mcp-servers/exercise-logger/dist/index.js"],
-    )
+    # Collect all tools from MCP servers
+    all_tools = []
+    for client in mcp_servers:
+        with client:
+            all_tools.extend(client.list_tools_sync())
 
     return Agent(
         model="claude-sonnet-4-20250514",  # Anthropic API
         system_prompt=ADVISORY_SYSTEM_PROMPT,
-        tools=[glucose_server, meal_server, exercise_server],
+        tools=all_tools,
     )
 
 

@@ -12,7 +12,8 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
 from strands import Agent
-from strands_tools import MCPServerTool
+from strands.tools.mcp import MCPClient
+from mcp import stdio_client, StdioServerParameters
 
 
 EMERGENCY_SYSTEM_PROMPT = """You are the Emergency Response Specialist for DiabetesCompanion, focused EXCLUSIVELY on critical diabetes situations requiring immediate action.
@@ -117,17 +118,22 @@ Remember: Your role is to provide immediate, clear guidance in critical moments 
 def create_emergency_agent() -> Agent:
     """Create the Emergency Agent for critical situations."""
 
-    # Access to glucose tracker for logging emergency readings
-    glucose_server = MCPServerTool(
-        name="glucose-tracker",
-        command="node",
-        args=["../mcp-servers/glucose-tracker/dist/index.js"],
+    # Access to glucose tracker for logging emergency readings using MCPClient
+    glucose_client = MCPClient(
+        lambda: stdio_client(StdioServerParameters(
+            command="node",
+            args=["../mcp-servers/glucose-tracker/dist/index.js"],
+        ))
     )
+
+    # Collect tools from MCP server
+    with glucose_client:
+        tools = glucose_client.list_tools_sync()
 
     return Agent(
         model="claude-sonnet-4-20250514",  # Anthropic API
         system_prompt=EMERGENCY_SYSTEM_PROMPT,
-        tools=[glucose_server],
+        tools=tools,
     )
 
 
