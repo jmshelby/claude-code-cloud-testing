@@ -11,8 +11,7 @@ import os
 # Add parent directory to path for imports
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
-from strands import Agent
-from strands_agents_tools.mcp import MCPServerTool
+from strands import Agent, MCPServerTool
 
 
 EMERGENCY_SYSTEM_PROMPT = """You are the Emergency Response Specialist for DiabetesCompanion, focused EXCLUSIVELY on critical diabetes situations requiring immediate action.
