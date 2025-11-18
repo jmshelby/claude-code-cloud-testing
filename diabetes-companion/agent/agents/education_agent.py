@@ -57,7 +57,7 @@ Remember: Your role is to empower users with knowledge so they can make informed
 def create_education_agent() -> Agent:
     """Create the Education Agent specialized for diabetes knowledge."""
     return Agent(
-        model="us.anthropic.claude-3-7-sonnet-20250219-v1:0",
+        model="claude-sonnet-4-20250514",  # Anthropic API
         system_prompt=EDUCATION_SYSTEM_PROMPT,
         tools=[],  # No tools - purely knowledge-based
     )

@@ -118,7 +118,7 @@ def create_diabetes_companion():
 
     # Create the agent with all MCP servers
     agent = Agent(
-        model="us.anthropic.claude-3-7-sonnet-20250219-v1:0",  # Using Claude 3.7 Sonnet via Bedrock
+        model="claude-sonnet-4-20250514",  # Anthropic API
         system_prompt=SYSTEM_PROMPT,
         tools=[glucose_server, meal_server, reminder_server, exercise_server],
     )

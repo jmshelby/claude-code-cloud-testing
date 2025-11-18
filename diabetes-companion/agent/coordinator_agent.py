@@ -166,7 +166,7 @@ class DiabetesCoordinator:
 
         # Create coordinator agent (no tools - just routing logic)
         self.coordinator = Agent(
-            model="us.anthropic.claude-3-7-sonnet-20250219-v1:0",
+            model="claude-sonnet-4-20250514",  # Anthropic API
             system_prompt=COORDINATOR_SYSTEM_PROMPT,
             tools=[],  # Coordinator doesn't need tools - agents have them
         )

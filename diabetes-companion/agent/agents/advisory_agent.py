@@ -106,7 +106,7 @@ def create_advisory_agent() -> Agent:
     )
 
     return Agent(
-        model="us.anthropic.claude-3-7-sonnet-20250219-v1:0",
+        model="claude-sonnet-4-20250514",  # Anthropic API
         system_prompt=ADVISORY_SYSTEM_PROMPT,
         tools=[glucose_server, meal_server, exercise_server],
     )

@@ -123,7 +123,7 @@ Time-in-Range      Daily Summaries    Weekly Goals                          Rese
 
 - **Agent Framework**: AWS Strands Agents (Python)
 - **Tool Servers**: Model Context Protocol (MCP) servers in TypeScript/Node.js
-- **LLM**: Amazon Bedrock (Claude 3.7 Sonnet)
+- **LLM**: Anthropic Claude Sonnet 4 (via Anthropic API)
 - **Architecture**: Polyglot (Python + TypeScript working seamlessly)
 
 ## Prerequisites
@@ -141,31 +141,39 @@ Time-in-Range      Daily Summaries    Weekly Goals                          Rese
    npm --version
    ```
 
-3. **AWS Account with Bedrock Access**
-   - Access to Claude 3.7 Sonnet model in Amazon Bedrock
-   - AWS credentials configured locally
+3. **Anthropic API Account**
+   - Sign up at [console.anthropic.com](https://console.anthropic.com)
+   - New accounts receive free credits to get started
+   - Get your API key from the dashboard
 
-### AWS Setup
+### Anthropic API Setup
 
-1. **Enable Amazon Bedrock Model Access**:
-   - Go to AWS Console → Amazon Bedrock → Model Access
-   - Request access to "Anthropic Claude 3.7 Sonnet" model
-   - Wait for approval (usually instant)
+1. **Get Your API Key**:
+   - Go to [console.anthropic.com](https://console.anthropic.com)
+   - Sign up or log in
+   - Navigate to API Keys
+   - Create a new API key
 
-2. **Configure AWS Credentials**:
+2. **Configure Your API Key**:
    ```bash
-   aws configure
-   # Enter your AWS Access Key ID
-   # Enter your AWS Secret Access Key
-   # Set default region (e.g., us-east-1 or us-west-2)
+   export ANTHROPIC_API_KEY="your-api-key-here"
    ```
 
-   Or use environment variables:
+   Or add to your shell profile (~/.bashrc, ~/.zshrc, etc.):
    ```bash
-   export AWS_ACCESS_KEY_ID="your-access-key"
-   export AWS_SECRET_ACCESS_KEY="your-secret-key"
-   export AWS_DEFAULT_REGION="us-east-1"
+   echo 'export ANTHROPIC_API_KEY="your-api-key-here"' >> ~/.bashrc
+   source ~/.bashrc
    ```
+
+   On Windows (PowerShell):
+   ```powershell
+   $env:ANTHROPIC_API_KEY="your-api-key-here"
+   ```
+
+**Cost Note**: New Anthropic accounts come with free credits. After that, Claude Sonnet 4 costs approximately:
+- $3 per million input tokens
+- $15 per million output tokens
+- Testing this demo typically costs under $1-2 for a full session
 
 ## Quick Start
 
@@ -220,14 +228,19 @@ pip install -r requirements.txt
 
 ## Usage
 
-### Starting the Multi-Agent System (Phase 3)
+### Starting the Multi-Agent System (Phase 4)
+
+**IMPORTANT**: Set your Anthropic API key before running:
+```bash
+export ANTHROPIC_API_KEY="your-api-key-here"
+```
 
 From the `diabetes-companion/agent` directory:
 
 ```bash
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 
-# Phase 3: Multi-Agent Coordinator (RECOMMENDED)
+# Phase 4: Multi-Agent Coordinator (RECOMMENDED)
 python coordinator_agent.py
 
 # Alternative: Phase 2 single agent (for comparison)
@@ -517,17 +530,27 @@ cd ../web-search && npm run build
 cd ../export-tools && npm run build
 ```
 
-### AWS Credentials Issues
+### API Key Issues
 
-Verify credentials:
-```bash
-aws sts get-caller-identity
+**Missing API Key Error:**
+```
+Error: ANTHROPIC_API_KEY environment variable not set
 ```
 
-Check Bedrock access:
+Solution:
 ```bash
-aws bedrock list-foundation-models --region us-east-1
+export ANTHROPIC_API_KEY="your-api-key-here"
 ```
+
+**Verify API Key is Set:**
+```bash
+echo $ANTHROPIC_API_KEY
+```
+
+**Invalid API Key Error:**
+- Check that your key is correct (starts with `sk-ant-`)
+- Verify your account has available credits at [console.anthropic.com](https://console.anthropic.com)
+- Ensure the key hasn't been revoked
 
 ### MCP Server Connection Issues
 
@@ -615,7 +638,8 @@ in each MCP server directory.
 - [AWS Strands Agents Documentation](https://strandsagents.com/latest/)
 - [Model Context Protocol (MCP)](https://modelcontextprotocol.io/)
 - [Strands GitHub Examples](https://github.com/strands-agents/samples)
-- [Amazon Bedrock](https://aws.amazon.com/bedrock/)
+- [Anthropic API Documentation](https://docs.anthropic.com/)
+- [Anthropic Console](https://console.anthropic.com) - Get API keys and manage credits
 - [American Diabetes Association (ADA)](https://diabetes.org/)
 - [Understanding Time in Range](https://diatribe.org/time-in-range)
 
