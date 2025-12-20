@@ -1,11 +1,13 @@
 package com.example;
 
-import org.json.JSONObject;
-import org.json.JSONArray;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
- * A simple Hello World application demonstrating JSON parsing
- * using org.json library.
+ * A simple Hello World application demonstrating basic Java features
+ * without external dependencies.
  */
 public class HelloWorld {
 
@@ -14,66 +16,75 @@ public class HelloWorld {
         System.out.println("Hello, World!");
         System.out.println("=".repeat(50));
 
-        // Demonstrate JSON object creation and parsing
-        demonstrateJsonObject();
+        // Demonstrate basic data structures
+        demonstrateMap();
 
-        // Demonstrate JSON array creation and parsing
-        demonstrateJsonArray();
+        // Demonstrate list operations
+        demonstrateList();
+
+        // Demonstrate simple calculations
+        demonstrateCalculations();
     }
 
     /**
-     * Demonstrates creating and parsing a JSON object
+     * Demonstrates using HashMap
      */
-    private static void demonstrateJsonObject() {
-        System.out.println("\n--- JSON Object Example ---");
+    private static void demonstrateMap() {
+        System.out.println("\n--- HashMap Example ---");
 
-        // Create a JSON object
-        JSONObject person = new JSONObject();
+        Map<String, Object> person = new HashMap<>();
         person.put("name", "John Doe");
         person.put("age", 30);
         person.put("city", "New York");
         person.put("isStudent", false);
 
-        // Print the JSON object
-        System.out.println("JSON Object: " + person.toString(2));
-
-        // Parse and access values
+        System.out.println("Person Map: " + person);
         System.out.println("\nParsed values:");
-        System.out.println("Name: " + person.getString("name"));
-        System.out.println("Age: " + person.getInt("age"));
-        System.out.println("City: " + person.getString("city"));
-        System.out.println("Is Student: " + person.getBoolean("isStudent"));
+        System.out.println("Name: " + person.get("name"));
+        System.out.println("Age: " + person.get("age"));
+        System.out.println("City: " + person.get("city"));
+        System.out.println("Is Student: " + person.get("isStudent"));
     }
 
     /**
-     * Demonstrates creating and parsing a JSON array
+     * Demonstrates using ArrayList
      */
-    private static void demonstrateJsonArray() {
-        System.out.println("\n--- JSON Array Example ---");
+    private static void demonstrateList() {
+        System.out.println("\n--- ArrayList Example ---");
 
-        // Create a JSON array with objects
-        JSONArray people = new JSONArray();
+        List<Map<String, Object>> people = new ArrayList<>();
 
-        JSONObject person1 = new JSONObject();
+        Map<String, Object> person1 = new HashMap<>();
         person1.put("name", "Alice");
         person1.put("age", 25);
 
-        JSONObject person2 = new JSONObject();
+        Map<String, Object> person2 = new HashMap<>();
         person2.put("name", "Bob");
         person2.put("age", 35);
 
-        people.put(person1);
-        people.put(person2);
+        people.add(person1);
+        people.add(person2);
 
-        // Print the JSON array
-        System.out.println("JSON Array: " + people.toString(2));
+        System.out.println("People List: " + people);
 
-        // Parse and iterate through the array
-        System.out.println("\nParsed array values:");
-        for (int i = 0; i < people.length(); i++) {
-            JSONObject person = people.getJSONObject(i);
+        System.out.println("\nIterate through list:");
+        for (int i = 0; i < people.size(); i++) {
+            Map<String, Object> person = people.get(i);
             System.out.println("Person " + (i + 1) + ": " +
-                person.getString("name") + ", Age: " + person.getInt("age"));
+                person.get("name") + ", Age: " + person.get("age"));
         }
+    }
+
+    /**
+     * Demonstrates simple calculations
+     */
+    private static void demonstrateCalculations() {
+        System.out.println("\n--- Calculation Examples ---");
+
+        int a = 10, b = 5;
+        System.out.println("Sum: " + a + " + " + b + " = " + (a + b));
+        System.out.println("Difference: " + a + " - " + b + " = " + (a - b));
+        System.out.println("Product: " + a + " * " + b + " = " + (a * b));
+        System.out.println("Quotient: " + a + " / " + b + " = " + (a / b));
     }
 }

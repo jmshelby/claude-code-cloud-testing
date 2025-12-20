@@ -20,12 +20,7 @@
     </properties>
 
     <dependencies>
-        <!-- JSON parsing library -->
-        <dependency>
-            <groupId>org.json</groupId>
-            <artifactId>json</artifactId>
-            <version>20231013</version>
-        </dependency>
+        <!-- No external dependencies - using only Java standard library -->
     </dependencies>
 
     <build>
